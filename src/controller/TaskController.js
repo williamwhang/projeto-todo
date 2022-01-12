@@ -1,6 +1,8 @@
 const req = require('express/lib/request');
 const TaskModel = require('../model/TaskModel');
 
+const current = new Date();
+
 class TaskController {
 
     async create(req, res) {
@@ -72,6 +74,20 @@ class TaskController {
                 return res.status(500).json(error);
             });
     }
-}
+
+    async late(req, res) {
+        await TaskModel
+            .find({
+                'when': { '$lt': current },
+                'macaddress': { '$in': req.body.macaddress }
+            })
+            .sort('when')
+            .then(response => {
+                return res.status(200).json(response);
+            })
+            .catch(error => {
+                return res.status(500).json(error);
+            });
+    }
 
 module.exports = new TaskController();
