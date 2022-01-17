@@ -1,13 +1,12 @@
-const req = require('express/lib/request');
 const TaskModel = require('../model/TaskModel');
 const {
     startOfDay,
     endOfDay,
     startOfWeek,
     endOfWeek,
-    starOfMonth,
+    startOfMonth,
     endOfMonth,
-    starOfYear,
+    startOfYear,
     endOfYear
 } = require('date-fns');
 
@@ -34,12 +33,13 @@ class TaskController {
             })
             .catch(error => {
                 return res.status(500).json(error);
-            })
+            });
+
     }
 
-    // listar todas as tarefas
     async all(req, res) {
-        await TaskModel.find({ macaddress: { '$in': req.body.macaddress } })
+
+        await TaskModel.find({ macaddress: { '$in': req.params.macaddress } })
             .sort('when')
             .then(response => {
                 return res.status(200).json(response);
@@ -59,7 +59,7 @@ class TaskController {
             })
             .catch(error => {
                 return res.status(500).json(error);
-            })
+            });
     }
 
     async delete(req, res) {
@@ -89,7 +89,7 @@ class TaskController {
         await TaskModel
             .find({
                 'when': { '$lt': current },
-                'macaddress': { '$in': req.body.macaddress }
+                'macaddress': { '$in': req.params.macaddress }
             })
             .sort('when')
             .then(response => {
@@ -103,7 +103,7 @@ class TaskController {
     async today(req, res) {
         await TaskModel
             .find({
-                'macaddress': { '$in': req.body.macaddress },
+                'macaddress': { '$in': req.params.macaddress },
                 'when': { '$gte': startOfDay(current), '$lte': endOfDay(current) }
             })
             .sort('when')
@@ -112,13 +112,13 @@ class TaskController {
             })
             .catch(error => {
                 return res.status(500).json(error);
-            })
+            });
     }
 
     async week(req, res) {
         await TaskModel
             .find({
-                'macaddress': { '$in': req.body.macaddress },
+                'macaddress': { '$in': req.params.macaddress },
                 'when': { '$gte': startOfWeek(current), '$lte': endOfWeek(current) }
             })
             .sort('when')
@@ -127,13 +127,13 @@ class TaskController {
             })
             .catch(error => {
                 return res.status(500).json(error);
-            })
+            });
     }
 
-    async moth(req, res) {
+    async month(req, res) {
         await TaskModel
             .find({
-                'macaddress': { '$in': req.body.macaddress },
+                'macaddress': { '$in': req.params.macaddress },
                 'when': { '$gte': startOfMonth(current), '$lte': endOfMonth(current) }
             })
             .sort('when')
@@ -142,13 +142,13 @@ class TaskController {
             })
             .catch(error => {
                 return res.status(500).json(error);
-            })
+            });
     }
 
     async year(req, res) {
         await TaskModel
             .find({
-                'macaddress': { '$in': req.body.macaddress },
+                'macaddress': { '$in': req.params.macaddress },
                 'when': { '$gte': startOfYear(current), '$lte': endOfYear(current) }
             })
             .sort('when')
@@ -157,8 +157,9 @@ class TaskController {
             })
             .catch(error => {
                 return res.status(500).json(error);
-            })
+            });
     }
+
 }
 
 module.exports = new TaskController();
